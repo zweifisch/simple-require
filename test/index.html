@@ -1,0 +1,23 @@
+<!DOCTYPE HTML>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>simple-require.js test</title>
+	<link rel="stylesheet" href="mocha.css" />
+</head>
+<body>
+	<div id="mocha"></div>
+	<script type="text/javascript" src="chai.js"></script>	
+	<script type="text/javascript" src="mocha.js"></script>	
+
+	<script type="text/javascript" src="../simple-require.js"></script>	
+	<script type="text/javascript" src="test.js"></script>	
+
+	<script type="text/javascript">
+		onload = function(){
+			mocha.setup({globals:['exports','module']});
+			mocha.run();
+		}
+	</script>
+</body>
+</html>
