@@ -7,19 +7,17 @@
   mocha.setup('bdd');
 
   describe('require', function() {
-    return describe('get', function() {
-      it('should load script synchrously', function() {
-        var lib1;
-        lib1 = require('lib/lib1');
-        (typeof lib1.echo).should.equal('function');
-        return lib1.echo('echo').should.equal('echo');
-      });
-      return it('should load script in loaded script', function() {
-        var lib2;
-        lib2 = require('lib/lib2');
-        (typeof lib2.echo2).should.equal('function');
-        return lib2.echo2('echo').should.equal('echo echo');
-      });
+    it('should load script synchrously', function() {
+      var lib1;
+      lib1 = require('lib/lib1');
+      (typeof lib1.echo).should.equal('function');
+      return lib1.echo('echo').should.equal('echo');
+    });
+    return it('should load script in loaded script', function() {
+      var lib2;
+      lib2 = require('lib/lib2');
+      (typeof lib2.echo2).should.equal('function');
+      return lib2.echo2('echo').should.equal('echo echo');
     });
   });
 

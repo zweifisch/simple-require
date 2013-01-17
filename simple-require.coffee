@@ -1,14 +1,15 @@
 
-container = {}
 require = (path)->
-	unless path of container
+	unless path of require.required
 		window.exports = {}
 		window.module = window
 		injectJS "#{path}.js"
-		container[path] = window.exports
+		require.required[path] = window.exports
 		delete window.exports
 		delete window.module
-	container[path]
+	require.required[path]
+
+require.required = {}
 
 getXHR = ->
 	if window.XMLHttpRequest

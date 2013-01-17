@@ -32,6 +32,11 @@ console.log(math.version);
 it's *synchronous*(should be slow when involving multiple js files), 
 you'd better pack the js files(in the right order) before deploy the app
 
+## how to pack
+
+TBD
+
 ## TODO
 
 * relative path
+* no globals

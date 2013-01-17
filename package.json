@@ -1,0 +1,31 @@
+{
+  "author": "zf",
+  "bin": {
+    "simple-pack": "./pack.coffee"
+  },
+  "dependencies": {
+    "coffee-script": "~1.4.0",
+    "uglify-js": "~2.2.3",
+    "commander": "~1.1.1"
+  },
+  "description": "nodejs style dependency management for browser",
+  "directories": {
+    "test": "test"
+  },
+  "keywords": [
+    "require",
+    "sync"
+  ],
+  "license": "BSD",
+  "main": "pack.js",
+  "name": "simple-require",
+  "readmeFilename": "README.md",
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/zweifisch/simple-require.git"
+  },
+  "scripts": {
+    "test": "python -mhttp.serve"
+  },
+  "version": "0.0.1"
+}
