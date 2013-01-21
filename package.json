@@ -22,7 +22,7 @@
   "readmeFilename": "README.md",
   "repository": {
     "type": "git",
-    "url": "git://github.com/zweifisch/simple-require.git"
+    "url": "https://github.com/zweifisch/simple-require.git"
   },
   "scripts": {
     "test": "python -mhttp.serve"

@@ -2,7 +2,7 @@
 (function() {
   var echo;
 
-  echo = require('lib/lib1').echo;
+  echo = require('./lib1').echo;
 
   exports.echo2 = function(msg) {
     return "" + (echo(msg)) + " " + (echo(msg));

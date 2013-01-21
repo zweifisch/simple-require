@@ -2,41 +2,52 @@
 
 nodejs style dependency management for browser
 
-## how does it look like
+## how to use
 
-include it
-```html
-<script type="text/javascript" src="simple-require.js"></script>
-<script type="text/javascript" src="main.js"></script>
+suposing following project structure
+```
+index.html
+main.js
+lib
+	my-math-helpers.js
+	my-time-helpers.js
+vender
+	simplre-require.js
 ```
 
-write your lib `lib/my-math-helpers.js`
+include `simplre-require.js`, `data-main="main"` here specifies the entry scripts `main.js`
+```html
+<script data-main="main" type="text/javascript" src="vender/simple-require.js"></script>
+```
+
+content of `lib/my-math-helpers.js`
 ```javascript
 exports.version = 'v0.0.1';
-// module.exports is also supported
+exports.divide = function(n,n2){
+	return Math.floor(n/n2);
+}
 ```
 
-load it in `main.js`
+content of `lib/my-time-helpers.js`
 ```javascript
-math = require('lib/my-math-helpers');
-console.log(math.version);
+var math = require('./my-math-helpers')
+exports.getTimestamp = function(){
+	return math.divide(+new Date(),1000);
+}
+```
+
+finally `main.js`
+```javascript
+var time = require('./lib/my-math-helpers');
+console.log(time.getTimestamp());
 ```
 
 ## why use it
 
 * code sharing between browser and nodejs made easy
-* simplicity(less then 40 lines of coffeescript)
-
-## the untold truth
-
-it's *synchronous*(should be slow when involving multiple js files), 
-you'd better pack the js files(in the right order) before deploy the app
+* simplicity(about 70 lines of coffeescript)
 
 ## how to pack
 
 TBD
 
-## TODO
-
-* relative path
-* no globals

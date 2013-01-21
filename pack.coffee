@@ -10,6 +10,7 @@ program
 	.option('--concat-scripts <file>', 'concat scripts list in <file>')
 	.option('--list-dependency <file>', 'list dependencies of a script')
 	.option('--build <file>', 'concat the script with all it\'s dependencies')
+	.option('--minify', 'minify the concated script using uglifyjs')
 	.parse process.argv
 
 
@@ -27,13 +28,22 @@ concatScripts = (scriptFiles)->
 		unless key of required
 			script = fs.readFileSync filename, 'utf-8'
 			"""
-			window.exports = {};
-			window.module = window;
-			#{script}
-			require.required["#{key}"] = window.exports;
+			(function(require){
+				exports = {};
+				module = {exports:exports};
+				(function(exports,module,require){
+					#{script}
+				})(exports,module,require);
+				require.required["#{key}"] = exports;
+			})(window.require)
 			"""
+	
+	# simpleRequire = fs.readFileSync path.join (path.dirname process.argv[1]), 'simple-require.js'
 	"""
-	#{fs.readFileSync path.join (path.dirname process.argv[1]), 'simple-require.js'}
+	window.require = function(key){
+		return require.required[key];
+	}
+	window.require.required = {};
 	#{scripts.join "\n"}
 	"""
 
@@ -45,9 +55,9 @@ scanForRequire = (content)->
 getDependencyTree = (filename)->
 
 
-minify = (script)->
-	minified = uglifyjs.minify script
-	fs.writeFileSync program.output, minified.code
+minify = (input)->
+	minified = uglifyjs.minify input, fromString:yes
+	minified.code
 
 
 if program.concatScripts
@@ -55,5 +65,7 @@ if program.concatScripts
 	unless fs.existsSync configFile
 		console.log "#{configFile} not found"
 		process.exit 1
-	concated = concatScripts parseFileList program.concatScripts
-	console.log concated
+	output = concatScripts parseFileList program.concatScripts
+	if program.minify
+		output = minify output
+	process.stdout.write output
