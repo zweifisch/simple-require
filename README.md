@@ -49,6 +49,12 @@ console.log(time.getTimestamp());
 
 ## how to pack
 
+install simple-require via npm
+
+```sh
+npm install -g simple-require
+```
+
 ### pack manually
 
 prepare a `build.txt`, the entry script must be placed at the top of it
@@ -59,7 +65,7 @@ lib/time-helper
 ```
 then run
 ```sh
-simple-pack --concate-scripts build.txt >! build.js
+simple-require --concate-scripts build.txt >! build.js
 ```
 
 there is also a `--minify` option, if set, the concated script will be passed to uglify-js
