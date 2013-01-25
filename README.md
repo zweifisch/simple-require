@@ -1,10 +1,10 @@
 # simple-require
 
-nodejs style dependency management for browser
+nodejs like require/exports for browser
 
 ## how to use
 
-suposing following project structure
+asumming following project structure
 ```
 index.html
 main.js
@@ -15,7 +15,7 @@ vender
 	simplre-require.js
 ```
 
-include `simplre-require.js`, `data-main="main"` here specifies the entry scripts `main.js`
+include `simplre-require.js` in `index.html`, `data-main="main"` here claims that the entry script is `main.js`
 ```html
 <script data-main="main" type="text/javascript" src="vender/simple-require.js"></script>
 ```
@@ -30,7 +30,7 @@ exports.divide = function(n,n2){
 
 content of `lib/my-time-helpers.js`
 ```javascript
-var math = require('./my-math-helpers')
+var math = require('./my-math-helpers');
 exports.getTimestamp = function(){
 	return math.divide(+new Date(),1000);
 }
@@ -38,16 +38,33 @@ exports.getTimestamp = function(){
 
 finally `main.js`
 ```javascript
-var time = require('./lib/my-math-helpers');
+var time = require('./lib/my-time-helpers');
 console.log(time.getTimestamp());
 ```
 
 ## why use it
 
 * code sharing between browser and nodejs made easy
-* simplicity(about 70 lines of coffeescript)
+* simplicity(about 100 lines of coffeescript)
 
 ## how to pack
+
+### pack manually
+
+prepare a `build.txt`, the entry script must be placed at the top of it
+```
+main
+lib/my-math-helper
+lib/time-helper
+```
+then run
+```sh
+simple-pack --concate-scripts build.txt >! build.js
+```
+
+there is also a `--minify` option, if set, the concated script will be passed to uglify-js
+
+### pack automatically
 
 TBD
 

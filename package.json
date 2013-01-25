@@ -1,20 +1,20 @@
 {
   "author": "zf",
   "bin": {
-    "simple-pack": "./pack.coffee"
+    "simple-require": "./pack.coffee"
   },
   "dependencies": {
     "coffee-script": "~1.4.0",
     "uglify-js": "~2.2.3",
     "commander": "~1.1.1"
   },
-  "description": "nodejs style dependency management for browser",
+  "description": "nodejs like require/exports for browser",
   "directories": {
     "test": "test"
   },
   "keywords": [
     "require",
-    "sync"
+    "dependency"
   ],
   "license": "BSD",
   "main": "pack.js",
@@ -27,5 +27,5 @@
   "scripts": {
     "test": "python -mhttp.serve"
   },
-  "version": "0.0.1"
+  "version": "0.0.2"
 }

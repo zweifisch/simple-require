@@ -1,4 +1,5 @@
 required = {}
+preset = require?.preset ? {}
 
 
 joinPath = (parts...)->
@@ -79,26 +80,31 @@ directRequire = (path)->
 		exports: exports
 		module:
 			exports: exports
-	result = getSync "#{path}.js"
-	if result.status isnt 200
-		throw
-			message: result.statusText
-			code: result.status
-	expose objects, (restore)->
-		injectJS """
-		(function(require,exports,module){
-			#{result.responseText}
-		})(require,exports,module)
-		"""
-		restore()
+
+	if preset?[path]
+		preset[path] objects.require,objects.exports,objects.module
 		required[path] = objects.module.exports
+		delete preset[path]
+	else
+		result = getSync "#{path}.js"
+		if result.status isnt 200
+			throw
+				message: result.statusText
+				code: result.status
+		expose objects, (restore)->
+			injectJS """
+			(function(require,exports,module){
+				#{result.responseText}
+			})(require,exports,module)
+			"""
+			restore()
+			required[path] = objects.module.exports
 
 
 getEntryScript = ->
 	[_...,script] = document.getElementsByTagName 'script'
 	script.getAttribute 'data-main'
 
+entryScript  = require?.entryScript ? getEntryScript()
 
-entryScript = getEntryScript()
-if entryScript
-	directRequire entryScript
+directRequire entryScript

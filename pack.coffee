@@ -22,29 +22,27 @@ parseFileList = (filename)->
 		.map (x)-> [x, path.join basedir, "#{x}.js"]
 
 
-concatScripts = (scriptFiles)->
+concatScripts = (scriptFiles,entry)->
 	required = {}
 	scripts = scriptFiles.map ([key,filename])->
 		unless key of required
 			script = fs.readFileSync filename, 'utf-8'
 			"""
-			(function(require){
-				exports = {};
-				module = {exports:exports};
-				(function(exports,module,require){
-					#{script}
-				})(exports,module,require);
-				require.required["#{key}"] = exports;
-			})(window.require)
+			require.preset["#{key}"] = function(require,exports,module){
+				#{script}
+			};
 			"""
 	
-	# simpleRequire = fs.readFileSync path.join (path.dirname process.argv[1]), 'simple-require.js'
+	simpleRequire = fs.readFileSync path.join (path.dirname process.argv[1]), 'simple-require.js'
 	"""
-	window.require = function(key){
-		return require.required[key];
-	}
-	window.require.required = {};
-	#{scripts.join "\n"}
+	(function(){
+		require = {
+			preset:{},
+			entryScript: "#{entry[0]}"
+		};
+		#{scripts.join "\n"}
+		#{simpleRequire}
+	})()
 	"""
 
 
@@ -65,7 +63,8 @@ if program.concatScripts
 	unless fs.existsSync configFile
 		console.log "#{configFile} not found"
 		process.exit 1
-	output = concatScripts parseFileList program.concatScripts
+	scriptFiles = parseFileList program.concatScripts
+	output = concatScripts scriptFiles, scriptFiles[0]
 	if program.minify
 		output = minify output
 	process.stdout.write output

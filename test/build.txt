@@ -1,4 +1,3 @@
-
+test
 lib/lib1
 lib/lib2
-test
