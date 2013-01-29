@@ -55,6 +55,21 @@ install simple-require via npm
 npm install -g simple-require
 ```
 
+```sh
+simple-require --build main.js >! packed.js
+```
+
+there is also a `--minify` option, if set, the concated script will be passed to uglify-js
+
+### more options
+
+using `--list-dependency` or `-l` for short to list dependencies of a file
+```sh
+simple-require --list-dependency main.js
+```
+
+`--json` for json output, `--flat` for more simpler output
+
 ### pack manually
 
 prepare a `build.txt`, the entry script must be placed at the top of it
@@ -65,12 +80,7 @@ lib/time-helper
 ```
 then run
 ```sh
-simple-require --concate-scripts build.txt >! build.js
+simple-require --concat-scripts build.txt >! build.js
 ```
 
-there is also a `--minify` option, if set, the concated script will be passed to uglify-js
-
-### pack automatically
-
-TBD
 
