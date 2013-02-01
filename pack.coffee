@@ -5,23 +5,16 @@ program = require 'commander'
 uglifyjs = require 'uglify-js'
 
 
-program
-	.version('0.0.3')
-	.option('-c, --concat-scripts <file>', 'concat scripts list in <file>')
-	.option('-l, --list-dependency <file>', 'list dependencies of a script')
-	.option('--json', 'output as json when listing dependencies')
-	.option('--flat', 'output dependencies as a flat list')
-	.option('-b, --build <file>', 'concat the script with all it\'s dependencies')
-	.option('-m, --minify', 'minify the concated script using uglifyjs')
-	.parse process.argv
-
-
 parseFileList = (filename)->
 	basedir = path.dirname filename
 	scripts = fs.readFileSync(filename, 'utf-8')
 		.split("\n")
 		.filter((x)-> x.length > 0 and x[0] isnt '#')
 		.map (x)-> [x, path.join basedir, "#{x}.js"]
+
+
+getSimpleRequire = ->
+	fs.readFileSync path.join((path.dirname __filename), 'simple-require.js'),'utf-8'
 
 
 concatScripts = (scriptFiles,entry)->
@@ -34,8 +27,6 @@ concatScripts = (scriptFiles,entry)->
 				#{script}
 			};
 			"""
-	
-	simpleRequire = fs.readFileSync path.join (path.dirname process.argv[1]), 'simple-require.js'
 	"""
 	(function(){
 		require = {
@@ -43,7 +34,7 @@ concatScripts = (scriptFiles,entry)->
 			entryScript: "#{entry[0]}"
 		};
 		#{scripts.join "\n"}
-		#{simpleRequire}
+		#{getSimpleRequire()}
 	})()
 	"""
 
@@ -104,40 +95,54 @@ minify = (input)->
 	minified.code
 
 
-output = ''
+main = ->
+	program
+		.version('0.0.4')
+		.option('-c, --concat-scripts <file>', 'concat scripts list in <file>')
+		.option('-l, --list-dependency <file>', 'list dependencies of a script')
+		.option('--json', 'output as json when listing dependencies')
+		.option('--flat', 'output dependencies as a flat list')
+		.option('-b, --build <file>', 'concat the script with all it\'s dependencies')
+		.option('-m, --minify', 'minify the output using uglifyjs')
+		.option('--get-simple-require', 'write simple-require.js to stdout')
+		.parse process.argv
 
-if program.listDependency
-	dependencies = getDependencies program.listDependency
-	output = getDependencyTree dependencies
+	output = ''
+	if program.listDependency
+		dependencies = getDependencies program.listDependency
+		output = getDependencyTree dependencies
 
-	if program.flat
-		output = flatten output
+		if program.flat
+			output = flatten output
 
-	if program.json
-		console.log JSON.stringify output, null, 3
-	else
-		prettyPrint output
-	process.exit 0
-
-
-if program.concatScripts
-	configFile = program.concatScripts
-	unless fs.existsSync configFile
-		console.log "#{configFile} not found"
-		process.exit 1
-	scriptFiles = parseFileList program.concatScripts
-	output = concatScripts scriptFiles, scriptFiles[0]
-
-
-if program.build
-	dependencies = flatten getDependencyTree getDependencies program.build
-	dependencies = dependencies.map (x)-> [x[0...-3],x]
-	output = concatScripts dependencies, dependencies[0]
+		if program.json
+			console.log JSON.stringify output, null, 3
+		else
+			prettyPrint output
+		process.exit 0
 
 
-if program.minify
-	output = minify output
+	if program.concatScripts
+		configFile = program.concatScripts
+		unless fs.existsSync configFile
+			console.log "#{configFile} not found"
+			process.exit 1
+		scriptFiles = parseFileList program.concatScripts
+		output = concatScripts scriptFiles, scriptFiles[0]
 
 
-if output
-	process.stdout.write output
+	if program.build
+		dependencies = flatten getDependencyTree getDependencies program.build
+		dependencies = dependencies.map (x)-> [x[0...-3],x]
+		output = concatScripts dependencies, dependencies[0]
+
+	if program.getSimpleRequire
+		output = getSimpleRequire()
+
+	if program.minify
+		output = minify output
+
+	if output
+		process.stdout.write output
+
+main()

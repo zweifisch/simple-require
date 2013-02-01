@@ -1,10 +1,9 @@
 {
   "author": "zf",
   "bin": {
-    "simple-require": "./pack.coffee"
+    "simple-require": "./bootstrap.js"
   },
   "dependencies": {
-    "coffee-script": "~1.4.0",
     "uglify-js": "~2.2.3",
     "commander": "~1.1.1"
   },
@@ -27,5 +26,5 @@
   "scripts": {
     "test": "python -mhttp.serve"
   },
-  "version": "0.0.2"
+  "version": "0.0.4"
 }
