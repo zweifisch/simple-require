@@ -104,6 +104,7 @@ main = ->
 		.option('--flat', 'output dependencies as a flat list')
 		.option('-b, --build <file>', 'concat the script with all it\'s dependencies')
 		.option('-m, --minify', 'minify the output using uglifyjs')
+		.option('--shims <file>', 'specify a list of shims to be included')
 		.option('--get-simple-require', 'write simple-require.js to stdout')
 		.parse process.argv
 
@@ -138,6 +139,11 @@ main = ->
 
 	if program.getSimpleRequire
 		output = getSimpleRequire()
+
+	if program.shims
+		shims = parseFileList(program.shims).map ([_,path])->
+			fs.readFileSync path,'utf-8'
+		output = "#{shims.join ';'};#{output}"
 
 	if program.minify
 		output = minify output
