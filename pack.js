@@ -163,7 +163,7 @@
     output = '';
     if (program.listDependency) {
       dependencies = getDependencies(program.listDependency);
-      output = getDependencyTree(dependencies);
+      output = getDependencyTree(dependencies, [program.listDependency]);
       if (program.flat) {
         output = flatten(output);
       }
