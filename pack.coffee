@@ -53,12 +53,17 @@ scanForRequire = (content)->
 		[]
 
 
-getDependencies = (filename, dict={})->
+getDependencies = (filename, dict={}, requiredBy=null)->
+	unless fs.existsSync filename
+		if requiredBy?
+			exit "#{filename} not exists, required by #{requiredBy}"
+		else
+			exit "#{filename} not exists"
 	requires = scanForRequire fs.readFileSync filename, 'utf-8'
 	requires = requires.map (r)-> path.join path.dirname(filename), "#{r}.js"
 	dict[filename] = requires
 	for r in requires
-		getDependencies r, dict unless r of dict
+		getDependencies r, dict, filename unless r of dict
 	dict
 
 
@@ -95,6 +100,11 @@ minify = (input)->
 	minified.code
 
 
+exit = (message, code=1)->
+	console.log message
+	process.exit code
+
+
 main = ->
 	program
 		.version('0.0.4')
@@ -126,8 +136,7 @@ main = ->
 	if program.concatScripts
 		configFile = program.concatScripts
 		unless fs.existsSync configFile
-			console.log "#{configFile} not found"
-			process.exit 1
+			exit "#{configFile} not found"
 		scriptFiles = parseFileList program.concatScripts
 		output = concatScripts scriptFiles, scriptFiles[0]
 
