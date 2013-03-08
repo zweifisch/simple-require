@@ -59,7 +59,24 @@ npm install -g simple-require
 simple-require --build main.js >! packed.js
 ```
 
-there is also a `--minify` option, if set, the concated script will be passed to uglify-js
+there is also a `--minify` option, if set, the concated script will be passed
+to uglify-js
+
+### including libraries
+
+prepare a text file with a list of libraries inside
+```
+vender/jquery
+vender/some-other-lib
+```
+
+set the data-shims attribute
+```html
+<script type="text/javascript" src="vender/simple-require.js"
+	data-main="main" data-shims="shims.txt"></script>
+```
+
+when packing scripts, use the `--shims` option
 
 ### more options
 

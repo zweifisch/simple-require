@@ -50,6 +50,22 @@ injectJS = (content)->
 	[head] = document.getElementsByTagName 'head'
 	head.appendChild script
 
+insertScript = (src,callback)->
+	script = document.createElement 'script'
+	script.type = 'text/javascript'
+	script.src = src
+	[head] = document.getElementsByTagName 'head'
+	script.onreadystatechange = callback
+	script.onload = callback
+	head.appendChild script
+
+insertScripts = (scripts,callback)->
+	do next = ->
+		script = scripts.shift()
+		if script
+			insertScript script,next
+		else
+			callback()
 
 expose = (objects,block)->
 	conflicts = {}
@@ -101,10 +117,24 @@ directRequire = (path)->
 			required[path] = objects.module.exports
 
 
-getEntryScript = ->
+getOptions = ->
 	[_...,script] = document.getElementsByTagName 'script'
-	script.getAttribute 'data-main'
+	main: script.getAttribute 'data-main'
+	shims: script.getAttribute 'data-shims'
 
-entryScript  = require?.entryScript ? getEntryScript()
+options = getOptions()
+	
+entryScript  = require?.entryScript ? options.main
 
-directRequire entryScript
+if options.shims
+	result = getSync "#{options.shims}"
+	if result.status isnt 200
+		throw
+			message: result.statusText
+			code: result.status
+	else
+		srcs = ("#{joinPath dirname(options.shims),src}.js" for src in result.responseText.split "\n" when src isnt '' and src[0] isnt '#')
+		insertScripts srcs,->
+			directRequire entryScript
+else
+	directRequire entryScript
