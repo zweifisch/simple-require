@@ -107,7 +107,7 @@ exit = (message, code=1)->
 
 main = ->
 	program
-		.version('0.0.6')
+		.version('0.0.7')
 		.option('-c, --concat-scripts <file>', 'concat scripts list in <file>')
 		.option('-l, --list-dependency <file>', 'list dependencies of a script')
 		.option('--json', 'output as json when listing dependencies')

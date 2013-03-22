@@ -43,10 +43,12 @@ getSync = (url)->
 	xhr
 
 
-injectJS = (content)->
+injectJS = (content,ref)->
 	script = document.createElement 'script'
 	script.type = 'text/javascript'
 	script.text = content
+	if ref
+		script.setAttribute 'data-ref',ref
 	[head] = document.getElementsByTagName 'head'
 	head.appendChild script
 
@@ -112,7 +114,7 @@ directRequire = (path)->
 			(function(require,exports,module){
 				#{result.responseText}
 			})(require,exports,module)
-			"""
+			""", path
 			restore()
 			required[path] = objects.module.exports
 
